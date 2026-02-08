@@ -3,26 +3,28 @@ import { useAppContext } from "../context/AppContext";
 import { Link, useParams } from "react-router-dom";
 import { assets } from "../assets/assets";
 import ProductCard from "../components/ProductCard";
+
 const SingleProduct = () => {
   const { products, navigate, addToCart } = useAppContext();
   const { id } = useParams();
   const [thumbnail, setThumbnail] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const product = products.find((product) => product._id === id);
-  console.log("product", product);
+
   useEffect(() => {
     if (products.length > 0) {
       let productsCopy = products.slice();
       productsCopy = productsCopy.filter(
-        (product) => product.category === product.category
+        (p) => p.category === product.category
       );
       setRelatedProducts(productsCopy.slice(0, 5));
     }
-  }, [products]);
+  }, [products, product]);
 
   useEffect(() => {
-    setThumbnail(product?.image[0] ? product.image[0] : null);
+    setThumbnail(product?.image[0] || null);
   }, [product]);
+
   return (
     product && (
       <div className="mt-16">
@@ -45,7 +47,7 @@ const SingleProduct = () => {
                   className="border max-w-24 border-gray-500/30 rounded overflow-hidden cursor-pointer"
                 >
                   <img
-                    src={`https://ayubgroceryapi.onrender.com/${image}`}
+                    src={image} // Direct Cloudinary URL
                     alt={`Thumbnail ${index + 1}`}
                   />
                 </div>
@@ -54,7 +56,7 @@ const SingleProduct = () => {
 
             <div className="border border-gray-500/30 max-w-100 rounded overflow-hidden">
               <img
-                src={`https://ayubgroceryapi.onrender.com/${thumbnail}`}
+                src={thumbnail} // Direct Cloudinary URL
                 alt="Selected product"
               />
             </div>
@@ -66,18 +68,14 @@ const SingleProduct = () => {
             <div className="flex items-center gap-0.5 mt-1">
               {Array(5)
                 .fill("")
-                .map(
-                  (_, i) =>
-                    product.rating >
-                    (
-                      <img
-                        src={i < 4 ? assets.star_icon : assets.star_dull_icon}
-                        alt="star"
-                        key={i}
-                        className="w-3.5 md:w-4"
-                      />
-                    )
-                )}
+                .map((_, i) => (
+                  <img
+                    src={i < product.rating ? assets.star_icon : assets.star_dull_icon}
+                    alt="star"
+                    key={i}
+                    className="w-3.5 md:w-4"
+                  />
+                ))}
               <p className="text-base ml-2">(4)</p>
             </div>
 
@@ -116,7 +114,8 @@ const SingleProduct = () => {
             </div>
           </div>
         </div>
-        {/* related prodcuts  */}
+
+        {/* Related products */}
         <div className="flex flex-col items-center mt-20">
           <div className="flex flex-col items-center w-max">
             <p className="text-2xl font-medium">Related Products</p>
@@ -125,9 +124,9 @@ const SingleProduct = () => {
 
           <div className="my-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 items-center justify-center">
             {relatedProducts
-              .filter((product) => product.inStock)
-              .map((product, index) => (
-                <ProductCard key={index} product={product} />
+              .filter((p) => p.inStock)
+              .map((p, index) => (
+                <ProductCard key={index} product={p} />
               ))}
           </div>
           <button
@@ -144,4 +143,5 @@ const SingleProduct = () => {
     )
   );
 };
+
 export default SingleProduct;

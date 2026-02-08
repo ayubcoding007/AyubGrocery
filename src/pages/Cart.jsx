@@ -117,7 +117,7 @@ const Cart = () => {
               >
                 <img
                   className="max-w-full h-full object-cover"
-                  src={`https://ayubgroceryapi.onrender.com/${product.image[0]}`}
+                  src={product.image[0]}
                   alt={product.name}
                 />
               </div>
