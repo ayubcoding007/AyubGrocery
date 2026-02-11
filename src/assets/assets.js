@@ -1,3 +1,4 @@
+import ayub_grocery from "./ayub_grocery.png"
 import logo from "./logo.svg";
 import logoicon from "./logo-icon.png"
 import search_icon from "./search_icon.svg";
@@ -72,6 +73,7 @@ import brown_rice_image from "./brown_rice_image.png";
 import barley_image from "./barley_image.png";
 
 export const assets = {
+  ayub_grocery,
   logo,
   logoicon,
   search_icon,
