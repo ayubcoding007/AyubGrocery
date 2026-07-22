@@ -88,7 +88,7 @@ const Auth = () => {
             Already have account?{" "}
             <span
               onClick={() => setState("login")}
-              className="text-indigo-500 cursor-pointer"
+              className="text-indigo-500 cursor-pointer hover:underline"
             >
               click here
             </span>
@@ -98,13 +98,15 @@ const Auth = () => {
             Create an account?{" "}
             <span
               onClick={() => setState("register")}
-              className="text-indigo-500 cursor-pointer"
+              className="text-indigo-500 cursor-pointer hover:underline"
             >
               click here
             </span>
           </p>
         )}
-        <button className="bg-indigo-500 hover:bg-indigo-600 transition-all text-white w-full py-2 rounded-md cursor-pointer">
+        <button 
+          className="bg-indigo-500 hover:bg-indigo-600 active:scale-95 active:bg-indigo-700 transition-all duration-150 text-white w-full py-2 rounded-md cursor-pointer"
+        >
           {state === "register" ? "Create Account" : "Login"}
         </button>
       </form>
