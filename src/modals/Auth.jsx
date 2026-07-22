@@ -9,8 +9,7 @@ const Auth = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   
-
-  const { setShowUserLogin, setUser, axios, navigate } = useAppContext();
+  const { setShowUserLogin, setUser, axios, navigate, refreshAuth } = useAppContext();
 
   const handleSubmit = async (e) => {
     try {
@@ -26,8 +25,10 @@ const Auth = () => {
       
       if (data.success) {
         toast.success(data.message);
+
+        await refreshAuth();
+        
         navigate("/");
-        setUser(data.user); 
         setShowUserLogin(false);
       } else {
         toast.error(data.message);
