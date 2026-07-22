@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
 import { assets } from "../assets/assets";
 import toast from "react-hot-toast";
+
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const {
@@ -15,31 +16,23 @@ const Navbar = () => {
     setSearchQuery,
     cartCount,
     axios,
+    logout, 
   } = useAppContext();
 
-  const logout = async () => {
-    try {
-      const { data } = await axios.get("/api/user/logout");
-      if (data.success) {
-        setUser(null);
-        navigate("/");
-        toast.success(data.message);
-      } else {
-        toast.error(data.message);
-      }
-    } catch (error) {
-      toast.error(error.message);
-    }
-  };
+  // logout function
+
   useEffect(() => {
     if (searchQuery.length > 0) {
       navigate("/products");
     }
-  }, []);
+  }, [searchQuery, navigate]); //Added navigate dependency
+
   return (
     <nav className="flex items-center justify-between px-6 md:px-16 lg:px-24 xl:px-32 py-4 border-b border-gray-300 bg-white relative transition-all z-20">
       <Link to="/">
-        <h2 className="text-2xl font-bold text-[#547792]">Ayub<span className="text-[#E67E22]">Grocery</span></h2>
+        <h2 className="text-2xl font-bold text-[#547792]">
+          Ayub<span className="text-[#E67E22]">Grocery</span>
+        </h2>
       </Link>
 
       {/* Desktop Menu */}
@@ -105,14 +98,17 @@ const Navbar = () => {
         {user ? (
           <div className="relative group">
             <img src={assets.profile_icon} alt="" className="w-10" />
-            <ul className="hidden group-hover:block absolute top-10 roght-0 bg-white shadow border border-gray-200 py-2 w-30 rounded-md z-40 text-sm">
+            <ul className="hidden group-hover:block absolute top-10 right-0 bg-white shadow border border-gray-200 py-2 w-30 rounded-md z-40 text-sm">
               <li
                 onClick={() => navigate("/my-orders")}
-                className="p-1.5 cursor-pointer"
+                className="p-1.5 cursor-pointer hover:bg-gray-100"
               >
                 My Orders
               </li>
-              <li className="cursor-pointer p-1.5" onClick={logout}>
+              <li
+                className="cursor-pointer p-1.5 hover:bg-gray-100"
+                onClick={logout} // Using context logout
+              >
                 Logout
               </li>
             </ul>
@@ -129,6 +125,7 @@ const Navbar = () => {
           </button>
         )}
       </div>
+
       <div className="flex items-center gap-6 md:hidden">
         <div
           className="relative cursor-pointer"
@@ -157,7 +154,6 @@ const Navbar = () => {
           aria-label="Menu"
           className="sm:hidden"
         >
-          {/* Menu Icon SVG */}
           <svg
             width="21"
             height="15"
@@ -193,26 +189,24 @@ const Navbar = () => {
         </Link>
 
         {user ? (
-          <div className="relative group">
-            <img src={assets.profile_icon} alt="" className="w-10" />
-            <ul className="hidden group-hover:block absolute top-10 roght-0 bg-white shadow border border-gray-200 py-2 w-30 rounded-md z-40 text-sm">
-              <li
-                onClick={() => navigate("/my-orders")}
-                className="p-1.5 cursor-pointer"
-              >
-                My Orders
-              </li>
-              <li
-                className="cursor-pointer p-1.5"
-                onClick={() => {
-                  setUser(null);
-                  navigate("/");
-                }}
-              >
-                Logout
-              </li>
-            </ul>
-          </div>
+          <>
+            <Link
+              onClick={() => setOpen(false)}
+              to={"/my-orders"}
+              className="w-full"
+            >
+              My Orders
+            </Link>
+            <button
+              className="w-full text-left text-red-500"
+              onClick={() => {
+                setOpen(false);
+                logout(); // Using context logout
+              }}
+            >
+              Logout
+            </button>
+          </>
         ) : (
           <button
             onClick={() => {

@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useAppContext } from "../context/AppContext";
 import { toast } from "react-hot-toast";
+
 const Auth = () => {
   const [state, setState] = useState("login");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { setShowUserLogin, setUser, axios, navigate } = useAppContext();
+  const { setShowUserLogin, axios, navigate, refreshAuth } = useAppContext(); 
 
   const handleSubmit = async (e) => {
     try {
@@ -18,18 +19,25 @@ const Auth = () => {
       });
       if (data.success) {
         toast.success(data.message);
-        navigate("/");
-        setUser(data.user);
+        
+        // Refresh auth state after login/register
+        await refreshAuth();
+        
         setShowUserLogin(false);
+        navigate("/");
       } else {
         toast.error(data.message);
       }
-    } catch (error) {}
+    } catch (error) {
+      console.error("Auth error:", error);
+      toast.error(error.response?.data?.message || "Something went wrong");
+    }
   };
+
   return (
     <div
       onClick={() => setShowUserLogin(false)}
-      className="fixed top-0 left-0 bottom-0 right-0 z-30 flex items-center justify-center  bg-black/50 text-gray-600"
+      className="fixed top-0 left-0 bottom-0 right-0 z-30 flex items-center justify-center bg-black/50 text-gray-600"
     >
       <form
         onSubmit={handleSubmit}
@@ -53,7 +61,7 @@ const Auth = () => {
             />
           </div>
         )}
-        <div className="w-full ">
+        <div className="w-full">
           <p>Email</p>
           <input
             onChange={(e) => setEmail(e.target.value)}
@@ -64,7 +72,7 @@ const Auth = () => {
             required
           />
         </div>
-        <div className="w-full ">
+        <div className="w-full">
           <p>Password</p>
           <input
             onChange={(e) => setPassword(e.target.value)}
@@ -103,4 +111,5 @@ const Auth = () => {
     </div>
   );
 };
+
 export default Auth;
