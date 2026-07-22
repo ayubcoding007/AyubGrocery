@@ -7,15 +7,17 @@ const Auth = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false); 
-  const { setShowUserLogin, axios, navigate, refreshAuth } = useAppContext();
+  const [loading, setLoading] = useState(false);
+  
+
+  const { setShowUserLogin, setUser, axios, navigate } = useAppContext();
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    setLoading(true);
-
     try {
+      e.preventDefault();
+      
+      setLoading(true);
+      
       const { data } = await axios.post(`/api/user/${state}`, {
         name,
         email,
@@ -24,12 +26,9 @@ const Auth = () => {
       
       if (data.success) {
         toast.success(data.message);
-        
-        // Refresh auth state after login/register
-        await refreshAuth();
-        
-        setShowUserLogin(false);
         navigate("/");
+        setUser(data.user); 
+        setShowUserLogin(false);
       } else {
         toast.error(data.message);
       }
@@ -37,7 +36,6 @@ const Auth = () => {
       console.error("Auth error:", error);
       toast.error(error.response?.data?.message || "Something went wrong");
     } finally {
-
       setLoading(false);
     }
   };
